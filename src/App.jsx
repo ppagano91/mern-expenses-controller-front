@@ -1,14 +1,22 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import HeroSection from './components/Home/HomePage'
+import PublicNavbar from './components/Navbar/PublicNavbar'
+import LoginForm from './components/Users/Login'
+import RegistrationForm from './components/Users/Register'
 
 function App() {
-  const [count, setCount] = useState(0)
+
 
   return (
     <>
-      <h1 className='text-3xl font-bold underline'>Hellor World!</h1>
+      <BrowserRouter>
+        <PublicNavbar/>
+        <Routes>
+          <Route path="/" element={<HeroSection/>}/>
+          <Route path="/login" element={<LoginForm/>}/>
+          <Route path="/register" element={<RegistrationForm/>}/>
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }
