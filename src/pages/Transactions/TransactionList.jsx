@@ -8,6 +8,18 @@ import { listTransactionsAPI } from "../../services/transactions/transactionServ
 import { listCategoriesAPI } from "../../services/category/categoryService";
 
 const TransactionList = () => {
+  const [filters, setFilters] = useState({
+    startDate: "",
+    endDate: "",
+    type: "",
+    category: "",
+  })
+
+  const handleFilterChange = (event) => {
+    const { name, value } = event.target;
+    setFilters((prevState) => ({...prevState, [name]:value}));
+  }
+
   const {
           data: dataTransactionsQuery,
           error: errorTransactionsQuery,
@@ -16,8 +28,8 @@ const TransactionList = () => {
           isFetched: isFetchedTransactionsQuery,
           refetch: refetchQuery
         } = useQuery({
-              queryFn: listTransactionsAPI,
-              queryKey: ["list-transaction"]
+              queryFn: () => listTransactionsAPI(filters),
+              queryKey: ["list-transaction", filters]
             })
 
   const {
@@ -33,6 +45,7 @@ const TransactionList = () => {
             })
 
   const navigate = useNavigate();
+  console.log(dataTransactionsQuery)
   return (
     <div className="my-4 p-4 shadow-lg rounded-lg bg-white">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -40,23 +53,29 @@ const TransactionList = () => {
         <input
           type="date"
           name="startDate"
+          value={filters.startDate}
+          onChange={handleFilterChange}
           className="p-2 rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
         />
         {/* End Date */}
         <input
           type="date"
           name="endDate"
+          value={filters.endDate}
+          onChange={handleFilterChange}
           className="p-2 rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
         />
         {/* Type */}
         <div className="relative">
           <select
             name="type"
+            value={filters.type}
+            onChange={handleFilterChange}
             className="w-full p-2 rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 appearance-none"
           >
-            <option value="">All Types</option>
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
+            <option key="all" value="">All Types</option>
+            <option key="income" value="income">Income</option>
+            <option key="expense" value="expense">Expense</option>
           </select>
           <ChevronDownIcon className="w-5 h-5 absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
         </div>
@@ -64,9 +83,11 @@ const TransactionList = () => {
         <div className="relative">
           <select
             name="category"
+            value={filters.category}
+            onChange={handleFilterChange}
             className="w-full p-2 rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 appearance-none"
           >
-            <option value="">All Categories</option>
+            <option key='all' value="all">All Categories</option>
             {dataCategoryQuery?.map((category)=>{
                 return (
                   <option key={category?._id} value={category?.name}>
@@ -75,6 +96,7 @@ const TransactionList = () => {
                 )
               })
             }
+            <option key='uncategorized' value="Uncategorized">uncategorized</option>
           </select>
           <ChevronDownIcon className="w-5 h-5 absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500" />
         </div>

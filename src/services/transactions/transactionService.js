@@ -22,9 +22,10 @@ export const addTransactionAPI = async({type, amount, category, date, descriptio
     return response.data
 }
 
-export const listTransactionsAPI = async() => {
+export const listTransactionsAPI = async({category, type, startDate, endDate}) => {
     const response = await axios.get(`${BASE_URL}/transactions/list`,
     {
+        params: {category, type, startDate, endDate},        
         headers:{
             Authorization: `Bearer ${token}`
         }
