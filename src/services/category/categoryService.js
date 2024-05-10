@@ -19,7 +19,12 @@ export const addCategoryAPI = async({name, type}) => {
 }
 
 export const listCategoriesAPI = async() => {
-    const response = await axios.get(`${BASE_URL}/categories/list`)
+    const response = await axios.get(`${BASE_URL}/categories/list`,
+    {
+        headers:{
+            Authorization: `Bearer ${token}`
+        }
+    })
 
     return response.data
 }
