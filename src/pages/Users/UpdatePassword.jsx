@@ -4,6 +4,10 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useMutation } from "@tanstack/react-query";
 import { changePasswordAPI } from "../../services/users/userService";
+import { useDispatch } from "react-redux";
+import { logoutAction } from "../../redux/slice/authSlice";
+import { USER_INFO } from "../../utils/consts";
+import AlertMessage from "../../components/Alert/AlertMessage";
 const validationSchema = Yup.object({
   password: Yup.string()
     .min(5, "Password must be at least 5 characters long")
@@ -11,10 +15,12 @@ const validationSchema = Yup.object({
 });
 const UpdatePassword = () => {
 
+  const dispatch = useDispatch();
+
   const mutation = useMutation({
     mutationFn: changePasswordAPI,
     mutationKey: ['change-password']
-  })
+  });
 
   const {mutateAsync, isPending, isError, error, isSuccess} = mutation;
 
@@ -28,7 +34,8 @@ const UpdatePassword = () => {
     onSubmit: (values) => {
       mutateAsync(values.password)
         .then((data) => {
-          console.log(data)
+          dispatch(logoutAction())
+          localStorage.removeItem(USER_INFO)
         })
         .catch((error) => console.log(error))
     },
@@ -44,6 +51,11 @@ const UpdatePassword = () => {
           >
             New Password
           </label>
+
+          {isPending && <AlertMessage type="loading" message="Updating..."/>}
+          {isError && <AlertMessage type="error" message={error.response.data.message}/>}
+          {isSuccess && <AlertMessage type="success" message="Password updated successfuly"/>}
+
           <div className="flex items-center border-2 py-2 px-3 rounded">
             <AiOutlineLock className="text-gray-400 mr-2" />
             <input

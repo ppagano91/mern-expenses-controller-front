@@ -2,8 +2,19 @@ import React from "react";
 import { FaUserCircle, FaEnvelope, FaLock } from "react-icons/fa";
 import { useFormik } from "formik";
 import UpdatePassword from "./UpdatePassword";
+import { useMutation } from "@tanstack/react-query";
+import { updateProfileAPI } from "../../services/users/userService";
+import AlertMessage from "../../components/Alert/AlertMessage";
 
 const UserProfile = () => {
+
+  const mutation = useMutation({
+    mutationFn: updateProfileAPI,
+    mutationKey: ['update-profile']
+  });
+
+  const {mutateAsync, isPending, isError, error, isSuccess} = mutation;
+
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -12,7 +23,12 @@ const UserProfile = () => {
 
     //Submit
     onSubmit: (values) => {
-      console.log(values);
+      mutateAsync(values)
+        .then((data) => {
+          console.log(data)
+          
+        })
+        .catch((error) => console.log(error))
     },
   });
   return (
@@ -25,6 +41,10 @@ const UserProfile = () => {
         <h3 className="text-xl font-semibold text-gray-800 mb-4">
           Update Profile
         </h3>
+
+        {isPending && <AlertMessage type="loading" message="Updating..."/>}
+        {isError && <AlertMessage type="error" message={error.response.data.message}/>}
+        {isSuccess && <AlertMessage type="success" message="Updated successfuly"/>}
 
         <form onSubmit={formik.handleSubmit} className="space-y-6">
           {/* User Name Field */}
