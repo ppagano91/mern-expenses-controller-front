@@ -29,7 +29,7 @@ const UpdateCategory = () => {
   //Navigate
   const navigate = useNavigate();
 
-    const {data: dataQuery, error: errorQuery, isError: isErrorQuery, isLoading: isLoadingQuery, isFetched: isFetchedQuery} = useQuery({
+    const {data: dataQuery, error: errorQuery, isError: isErrorQuery, isLoading: isLoadingQuery, isFetched: isFetchedQuery, refetch} = useQuery({
         queryFn: async () => await categoryByIdAPI(id),
         queryKey: ["category-by-id"]
     })
@@ -54,6 +54,7 @@ const UpdateCategory = () => {
       mutateAsync(data)
         .then((data) => {
           //redirect
+          refetch()
           navigate("/categories");
         })
         .catch((e) => console.error(e));

@@ -54,3 +54,12 @@ export const updateCategoryAPI = async({name, type, id}) => {
     return response.data
 }
 
+export const deleteCategoryAPI = async(id) => {
+    const response = await axios.delete(`${BASE_URL}/categories/delete/${id}`,{
+        headers:{
+            Authorization: `Bearer ${token}`
+        }
+    })
+
+    return response.data
+}

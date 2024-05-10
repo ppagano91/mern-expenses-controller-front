@@ -24,14 +24,14 @@ const validationSchema = Yup.object({
 
 const AddCategory = () => {
 
-    const navigate = useNavigate();
-  
-    const mutation = useMutation({
-      mutationFn: addCategoryAPI,
-      mutationKey: ['login']
-    })
+  const navigate = useNavigate();
 
-    const {mutateAsync, isPending, isError, error, isSuccess} = mutation;
+  const mutation = useMutation({
+    mutationFn: addCategoryAPI,
+    mutationKey: ['login']
+  })
+
+  const {mutateAsync, isPending, isError, error, isSuccess} = mutation;
     
   const formik = useFormik({
     initialValues: {
