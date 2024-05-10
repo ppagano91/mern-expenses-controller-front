@@ -4,6 +4,7 @@ import PublicNavbar from './components/Navbar/PublicNavbar'
 import PrivateNavbar from './components/Navbar/PrivateNavbar'
 import LoginForm from './pages/Users/Login'
 import RegistrationForm from './pages/Users/Register'
+import UserProfile from './pages/Users/UserProfile'
 import AddCategory from './pages/Category/AddCategory'
 
 import { useSelector } from 'react-redux'
@@ -29,6 +30,7 @@ function App() {
           <Route path="/update-category/:id" element={<UpdateCategory/>}/>
           <Route path="/add-transaction" element={<TransactionForm/>}/>
           <Route path="/dashboard" element={<Dashboard/>}/>
+          <Route path="/profile" element={<UserProfile/>}/>
         </Routes>
       </BrowserRouter>
     </>
