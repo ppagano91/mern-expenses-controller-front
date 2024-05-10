@@ -9,6 +9,7 @@ import AddCategory from './pages/Category/AddCategory'
 import { useSelector } from 'react-redux'
 import CategoriesList from './pages/Category/CategoriesList'
 import UpdateCategory from './pages/Category/UpdateCategory'
+import TransactionForm from './pages/Transactions/TransactionForm'
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/add-category" element={<AddCategory/>}/>
           <Route path="/categories" element={<CategoriesList/>}/>
           <Route path="/update-category/:id" element={<UpdateCategory/>}/>
+          <Route path="/add-transaction" element={<TransactionForm/>}/>
         </Routes>
       </BrowserRouter>
     </>

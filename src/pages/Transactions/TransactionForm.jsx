@@ -7,6 +7,11 @@ import {
   FaRegCommentDots,
   FaWallet,
 } from "react-icons/fa";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { listCategoriesAPI } from "../../services/category/categoryService";
+import { addTransactionAPI } from "../../services/transactions/transactionService";
+import { useNavigate } from "react-router-dom";
+import AlertMessage from "../../components/Alert/AlertMessage";
 
 const validationSchema = Yup.object({
   type: Yup.string()
@@ -21,6 +26,38 @@ const validationSchema = Yup.object({
 });
 
 const TransactionForm = () => {
+
+  const navigate = useNavigate();
+
+  const mutation = useMutation({
+    mutationFn: addTransactionAPI,
+    mutationKey: ['add-transaction']
+  })
+
+  const {mutateAsync, isPending, isError:isErrorMutation, error: errorMutation, isSuccess} = mutation;
+
+  const {data, error, isError, isLoading, isFetched, refetch} = useQuery({
+    queryFn: listCategoriesAPI,
+    queryKey: ["list-categories"]
+  })
+
+  const formik = useFormik({
+    initialValues: {
+      type: "",
+      amount: "",
+      category:"",
+      date:"",
+      description:"",
+    },
+    validationSchema,
+    onSubmit: (values) => {
+      console.log(values)
+        mutateAsync(values)
+        .then((data)=>console.log(data))
+        .catch((error) => console.error(error))
+    },
+  });
+
   return (
     <form
       onSubmit={formik.handleSubmit}
@@ -33,6 +70,21 @@ const TransactionForm = () => {
         <p className="text-gray-600">Fill in the details below.</p>
       </div>
       {/* Display alert message */}
+      {isError && (
+        <AlertMessage
+          type="error"
+          message={
+            error?.response?.data?.message ||
+            "Something happened please try again later"
+          }
+        />
+      )}
+      {isSuccess && (
+        <AlertMessage
+          type="success"
+          message="Transaction added successfully..."
+        />
+      )}
 
       {/* Transaction Type Field */}
       <div className="space-y-2">
@@ -87,6 +139,13 @@ const TransactionForm = () => {
           className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
         >
           <option value="">Select a category</option>
+          {data?.map((category)=>{
+            return (
+              <option key={category?._id} value={category?.name}>
+                {category?.name}
+              </option>
+            )
+          })}
         </select>
         {formik.touched.category && formik.errors.category && (
           <p className="text-red-500 text-xs italic">
