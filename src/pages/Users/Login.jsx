@@ -7,6 +7,7 @@ import { FaEnvelope, FaLock } from "react-icons/fa";
 import { loginAPI } from "../../services/users/userServices";
 import AlertMessage from "../../components/Alert/AlertMessage";
 import { loginAction } from "../../redux/slice/authSlice"
+import { USER_INFO } from "../../utils/consts";
 
 // Validations
 const validationSchema = Yup.object({
@@ -33,7 +34,7 @@ const LoginForm = () => {
       mutateAsync(values)
       .then((data) => {
         disptach(loginAction(data))
-        localStorage.setItem("__userInfo__", JSON.stringify(data))
+        localStorage.setItem(USER_INFO, JSON.stringify(data))
       })
       .catch((error) => console.error(error))
       

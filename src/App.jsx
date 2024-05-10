@@ -1,16 +1,20 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import HeroSection from './pages/Home/HomePage'
 import PublicNavbar from './components/Navbar/PublicNavbar'
+import PrivateNavbar from './components/Navbar/PrivateNavbar'
 import LoginForm from './pages/Users/Login'
 import RegistrationForm from './pages/Users/Register'
 
+import { useSelector } from 'react-redux'
+
 function App() {
 
+  const user = useSelector((state) => state?.auth?.user)  
 
   return (
     <>
       <BrowserRouter>
-        <PublicNavbar/>
+        {user ? <PrivateNavbar/> : <PublicNavbar/>}
         <Routes>
           <Route path="/" element={<HeroSection/>}/>
           <Route path="/login" element={<LoginForm/>}/>
