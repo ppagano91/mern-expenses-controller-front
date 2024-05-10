@@ -8,6 +8,7 @@ import AddCategory from './pages/Category/AddCategory'
 
 import { useSelector } from 'react-redux'
 import CategoriesList from './pages/Category/CategoriesList'
+import UpdateCategory from './pages/Category/UpdateCategory'
 
 function App() {
 
@@ -23,6 +24,7 @@ function App() {
           <Route path="/register" element={<RegistrationForm/>}/>
           <Route path="/add-category" element={<AddCategory/>}/>
           <Route path="/categories" element={<CategoriesList/>}/>
+          <Route path="/update-category/:id" element={<UpdateCategory/>}/>
         </Routes>
       </BrowserRouter>
     </>

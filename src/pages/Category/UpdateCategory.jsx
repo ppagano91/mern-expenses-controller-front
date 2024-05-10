@@ -10,8 +10,8 @@ import {
 import { SiDatabricks } from "react-icons/si";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { updateCategoryAPI } from "../../services/category/categoryService";
-import AlertMessage from "../Alert/AlertMessage";
+import { categoryByIdAPI, updateCategoryAPI } from "../../services/category/categoryService";
+import AlertMessage from "../../components/Alert/AlertMessage";
 
 const validationSchema = Yup.object({
   name: Yup.string()
@@ -25,9 +25,14 @@ const validationSchema = Yup.object({
 const UpdateCategory = () => {
   //Params
   const { id } = useParams();
-  console.log(id);
+
   //Navigate
   const navigate = useNavigate();
+
+    const {data: dataQuery, error: errorQuery, isError: isErrorQuery, isLoading: isLoadingQuery, isFetched: isFetchedQuery} = useQuery({
+        queryFn: async () => await categoryByIdAPI(id),
+        queryKey: ["category-by-id"]
+    })
 
   // Mutation
   const { mutateAsync, isPending, isError, error, isSuccess } = useMutation({
@@ -35,6 +40,7 @@ const UpdateCategory = () => {
     mutationKey: ["update-category"],
   });
 
+  // TODO: tomar los valores de la categoría seleccionada
   const formik = useFormik({
     initialValues: {
       type: "",
@@ -50,7 +56,7 @@ const UpdateCategory = () => {
           //redirect
           navigate("/categories");
         })
-        .catch((e) => console.log(e));
+        .catch((e) => console.error(e));
     },
   });
 

@@ -29,3 +29,28 @@ export const listCategoriesAPI = async() => {
     return response.data
 }
 
+export const categoryByIdAPI = async(id) => {
+    const response = await axios.get(`${BASE_URL}/categories/category/${id}`,{
+        headers:{
+            Authorization: `Bearer ${token}`
+        }
+    })
+
+    console.log(response)
+
+    return response.data
+}
+
+export const updateCategoryAPI = async({name, type, id}) => {
+    const response = await axios.put(`${BASE_URL}/categories/update/${id}`,{
+        name,
+        type 
+    },{
+        headers:{
+            Authorization: `Bearer ${token}`
+        }
+    })
+
+    return response.data
+}
+
