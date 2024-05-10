@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux'
 import * as Yup from "yup";
 import { useMutation } from "@tanstack/react-query";
 import { FaEnvelope, FaLock } from "react-icons/fa";
-import { loginAPI } from "../../services/users/userServices";
+import { loginAPI } from "../../services/users/userService";
 import AlertMessage from "../../components/Alert/AlertMessage";
 import { loginAction } from "../../redux/slice/authSlice"
 import { USER_INFO } from "../../utils/consts";

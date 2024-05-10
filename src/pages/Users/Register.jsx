@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
-import { registerAPI } from "../../services/users/userServices";
+import { registerAPI } from "../../services/users/userService";
 import AlertMessage from "../../components/Alert/AlertMessage";
 
 //Validations
@@ -28,7 +28,7 @@ const validationSchema = Yup.object({
 
 const RegistrationForm = () => {
   const navigate = useNavigate();
-  
+
   const mutation = useMutation({
     mutationFn: registerAPI,
     mutationKey: ['register']
