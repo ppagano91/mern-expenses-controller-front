@@ -29,7 +29,7 @@ const TransactionList = () => {
           refetch: refetchQuery
         } = useQuery({
               queryFn: () => listTransactionsAPI(filters),
-              queryKey: ["list-transaction", filters]
+              queryKey: ["list-transactions", filters]
             })
 
   const {
@@ -45,7 +45,6 @@ const TransactionList = () => {
             })
 
   const navigate = useNavigate();
-  console.log(dataTransactionsQuery)
   return (
     <div className="my-4 p-4 shadow-lg rounded-lg bg-white">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

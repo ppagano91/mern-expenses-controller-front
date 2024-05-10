@@ -51,7 +51,6 @@ const TransactionForm = () => {
     },
     validationSchema,
     onSubmit: (values) => {
-      console.log(values)
         mutateAsync(values)
         .then((data)=>console.log(data))
         .catch((error) => console.error(error))
