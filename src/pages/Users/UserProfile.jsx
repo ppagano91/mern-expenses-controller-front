@@ -1,60 +1,92 @@
-import React from "react";
-import { FaUserCircle, FaEnvelope, FaLock } from "react-icons/fa";
-import { useFormik } from "formik";
-import UpdatePassword from "./UpdatePassword";
-import { useMutation } from "@tanstack/react-query";
-import { updateProfileAPI } from "../../services/users/userService";
-import AlertMessage from "../../components/Alert/AlertMessage";
+import { useEffect } from "react"
+import { FaUserCircle, FaEnvelope } from "react-icons/fa"
+import { useFormik } from "formik"
+import UpdatePassword from "./UpdatePassword"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import { updateProfileAPI, getProfileAPI } from "../../services/users/userService"
+import AlertMessage from "../../components/Alert/AlertMessage"
 
 const UserProfile = () => {
-
-  const mutation = useMutation({
-    mutationFn: updateProfileAPI,
-    mutationKey: ['update-profile']
-  });
-
-  const {mutateAsync, isPending, isError, error, isSuccess} = mutation;
-
   const formik = useFormik({
     initialValues: {
       email: "",
       username: "",
     },
-
-    //Submit
     onSubmit: (values) => {
       mutateAsync(values)
         .then((data) => {
-          console.log(data)
-          
         })
-        .catch((error) => console.log(error))
+        .catch((error) => console.error("Update error:", error))
     },
-  });
+  })
+  const {
+    data: profileData,
+    isLoading: isProfileLoading,
+    isError: isProfileError,
+    error: profileError,
+    refetch,
+  } = useQuery({
+    queryKey: ["get-profile"],
+    queryFn: getProfileAPI,
+    enabled: true,
+    staleTime: 300000,
+    onSuccess: (data) => {
+      if (data) {
+        formik.setValues({
+          username: data.username || "",
+          email: data.email || "",
+        })
+      }
+    },
+    onError: (err) => {
+      console.error("Profile fetch error:", err)
+    },
+  })
+
+  // Mutación para actualizar el perfil
+  const mutation = useMutation({
+    mutationFn: updateProfileAPI,
+    mutationKey: ["update-profile"],
+    onSuccess: () => {
+      refetch()
+    },
+  })
+
+  const { mutateAsync, isPending, isError, error, isSuccess } = mutation
+
+  // Efecto para asegurarse de que los datos se carguen correctamente
+  useEffect(() => {
+    if (profileData && (!formik.values.username || !formik.values.email)) {      
+      formik.setValues({
+        username: profileData.username || "",
+        email: profileData.email || "",
+      })
+    }
+  }, [profileData])
+
   return (
     <>
       <div className="max-w-4xl mx-auto my-10 p-8 bg-white rounded-lg shadow-md">
+        {isProfileLoading ? <AlertMessage type="loading" message="Loading profile..." />:
+        <>
         <h1 className="mb-2 text-2xl text-center font-extrabold">
-          Welcome Masynctech
-          <span className="text-gray-500 text-sm ml-2">info@gmail.com</span>
-        </h1>
-        <h3 className="text-xl font-semibold text-gray-800 mb-4">
-          Update Profile
-        </h3>
-
-        {isPending && <AlertMessage type="loading" message="Updating..."/>}
-        {isError && <AlertMessage type="error" message={error.response.data.message}/>}
-        {isSuccess && <AlertMessage type="success" message="Updated successfuly"/>}
+          Welcome
+          <span className="text-gray-500 text-sm ml-2">{formik.values.email}</span>
+        </h1>        
+        <h3 className="text-xl font-semibold text-gray-800 mb-4">Profile</h3>        
+        {isPending && <AlertMessage type="loading" message="Updating..." />}
+        {isError && <AlertMessage type="error" message={error?.response?.data?.message || "Error updating profile"} />}
+        {isSuccess && <AlertMessage type="success" message="Updated successfully" />}        
+        {isProfileError && (
+          <AlertMessage type="error" message={profileError?.response?.data?.message || "Error loading profile"} />
+        )}
 
         <form onSubmit={formik.handleSubmit} className="space-y-6">
           {/* User Name Field */}
           <div className="flex items-center space-x-4">
             <FaUserCircle className="text-3xl text-gray-400" />
             <div className="flex-1">
-              <label
-                htmlFor="username"
-                className="text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="username" className="text-sm font-medium text-gray-700">
                 Username
               </label>
               <input
@@ -66,9 +98,7 @@ const UserProfile = () => {
               />
             </div>
             {formik.touched.username && formik.errors.username && (
-              <span className="text-xs text-red-500">
-                {formik.errors.username}
-              </span>
+              <span className="text-xs text-red-500">{formik.errors.username}</span>
             )}
           </div>
 
@@ -76,10 +106,7 @@ const UserProfile = () => {
           <div className="flex items-center space-x-4">
             <FaEnvelope className="text-3xl text-gray-400" />
             <div className="flex-1">
-              <label
-                htmlFor="email"
-                className="text-sm font-medium text-gray-700"
-              >
+              <label htmlFor="email" className="text-sm font-medium text-gray-700">
                 Email
               </label>
               <input
@@ -91,9 +118,7 @@ const UserProfile = () => {
               />
             </div>
             {formik.touched.email && formik.errors.email && (
-              <span className="text-xs text-red-500">
-                {formik.errors.email}
-              </span>
+              <span className="text-xs text-red-500">{formik.errors.email}</span>
             )}
           </div>
 
@@ -102,11 +127,14 @@ const UserProfile = () => {
             <button
               type="submit"
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              disabled={isPending || isProfileLoading}
             >
-              Save Changes
+              {isPending ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </form>
+        </>
+      }
       </div>
       <UpdatePassword />
     </>
