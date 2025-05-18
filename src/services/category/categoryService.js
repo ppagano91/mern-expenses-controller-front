@@ -36,8 +36,6 @@ export const categoryByIdAPI = async(id) => {
         }
     })
 
-    console.log(response)
-
     return response.data
 }
 
